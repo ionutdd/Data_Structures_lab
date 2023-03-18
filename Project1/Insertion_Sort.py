@@ -4,7 +4,7 @@ start_time = time.time()
 f = open("date.in","r")
 g = open("date.out","w")
 linie = f.read().split()
-arr = [int(x) for x in linie] * 50
+arr = [int(x) for x in linie]
 arr2 = sorted(arr)
 
 
