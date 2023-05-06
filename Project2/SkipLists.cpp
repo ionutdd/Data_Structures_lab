@@ -17,10 +17,10 @@ using namespace std;
 
 ifstream f("abce.in");
 ofstream g("abce.out");
-// definim nivelul maxim al skip listei
+
 const int MAX_LEVEL = 100000001;
 
-// structura nodului din skip listă
+
 struct Node {
     int value;
     int level;
@@ -50,7 +50,6 @@ int randomLevel() {
     return level;
 }
 
-// clasa skip listă
 class SkipList {
 private:
     Node* head;
@@ -59,28 +58,23 @@ private:
 
 public:
     SkipList() {
-        // inițializăm capul skip listei cu un nod invalid
         head = new Node(INT_MIN, MAX_LEVEL);
         level = 0;
         count = 0;
     }
 
     ~SkipList() {
-        // eliberăm toți nodurile din skip listă
         Node* curr = head->next[0];
         while (curr != nullptr) {
             Node* tmp = curr;
             curr = curr->next[0];
             delete tmp;
         }
-
-        // eliberăm și capul
+        
         delete head;
     }
 
-    // adăugăm un nod cu valoarea value în skip listă
     void insert(int value) {
-        // căutăm poziția unde ar trebui să inserăm nodul
         Node* curr = head;
         Node* update[MAX_LEVEL + 1];
         for (int i = level; i >= 0; i--) {
@@ -91,16 +85,13 @@ public:
         }
         curr = curr->next[0];
 
-        // verificăm dacă nodul există deja în skip listă
         if (curr != nullptr && curr->value == value) {
             return;
         }
 
-        // creăm un nou nod cu un nivel aleatoriu
         int newLevel = randomLevel();
         Node* newNode = new Node(value, newLevel);
 
-        // actualizăm nivelul skip listei dacă este cazul
         if (newLevel > level) {
             for (int i = level + 1; i <= newLevel; i++) {
                 update[i] = head;
@@ -108,7 +99,6 @@ public:
             level = newLevel;
         }
 
-        // inserăm noul nod în skip listă
         for (int i = 0; i <= newLevel; i++) {
             newNode->next[i] = update[i]->next[i];
             update[i]->next[i] = newNode;
@@ -117,9 +107,7 @@ public:
         count++;
     }
 
-    // ștergem nodul cu valoarea value din skip listă (dacă există)
     void remove(int value) {
-        // căutăm poziția nodului de șters
         Node* curr = head;
         Node* update[MAX_LEVEL + 1];
         for (int i = level; i >= 0; i--) {
@@ -130,14 +118,12 @@ public:
         }
         curr = curr->next[0];
 
-        // insert the new node
         Node* newNode = new Node(level, value);
         for (int i = 0; i <= level; i++) {
             newNode->next[i] = update[i]->next[i];
             update[i]->next[i] = newNode;
         }
 
-        // increase size of the skip list
         count++;
     }
 
@@ -160,19 +146,15 @@ public:
     int ceiling(int value) const;
     void range(int x, int y) const;
     void print() {
-        // iterate through all levels of the skip list
         for (int i = MAX_LEVEL - 1; i >= 0; i--) {
             g << "Level " << i << ": ";
 
-            // start at the first node of the current level
             Node* node = head->next[i];
 
-            // iterate through all nodes on the current level
             while (node != nullptr) {
                 // print the node's value
                 g << node->value << " ";
 
-                // move to the next node on the current level
                 node = node->next[i];
             }
 
